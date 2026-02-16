@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronLeft, ChevronRight, X, Phone, MessageCircle, Send, Ruler, Layers } from 'lucide-react';
 import { products, getProductTitle, getProductDescription } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
+import SEO from '@/components/SEO';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -60,6 +61,27 @@ const ProductDetail = () => {
 
   return (
     <div>
+      <SEO
+        title={title}
+        description={description}
+        canonical={`/product/${product.id}`}
+        ogImage={product.image}
+        ogType="product"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: title,
+          description: description,
+          image: product.image,
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'GEL',
+            availability: 'https://schema.org/InStock',
+          },
+          material: product.material,
+        }}
+      />
       {/* Breadcrumb */}
       <div className="bg-surface border-b border-border">
         <div className="container mx-auto px-4 py-3">
