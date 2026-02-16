@@ -34,7 +34,13 @@
     "contactUs": "Contact Us",
     "send": "Send",
     "search": "Search",
-    "close": "Close"
+    "close": "Close",
+    "back": "Back"
+  },
+  "product": {
+    "dimensions": "Dimensions",
+    "material": "Material",
+    "similar": "Similar Products"
   },
   "granite": {
     "title": "Granite Countertops",
