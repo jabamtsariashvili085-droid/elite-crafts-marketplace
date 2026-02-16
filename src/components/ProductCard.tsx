@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Product, getProductTitle } from '@/data/products';
+import LazyImage from '@/components/LazyImage';
 
 interface ProductCardProps {
   product: Product;
@@ -12,15 +13,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="group bg-card rounded-xl overflow-hidden border border-border hover-lift shadow-sm">
-      <div className="relative overflow-hidden aspect-[4/3]">
-        <img
+      <div className="relative">
+        <LazyImage
           src={product.image}
           alt={title}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          wrapperClassName="aspect-[4/3]"
+          className="transition-transform duration-500 group-hover:scale-110"
         />
         {product.featured && (
-          <span className="absolute top-3 left-3 bg-gold-gradient text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full">
+          <span className="absolute top-3 left-3 bg-gold-gradient text-accent-foreground text-xs font-semibold px-3 py-1 rounded-full z-10">
             ⭐ Featured
           </span>
         )}
