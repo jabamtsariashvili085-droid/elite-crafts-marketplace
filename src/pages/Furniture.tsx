@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTabs from '@/components/CategoryTabs';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/products';
+import SEO from '@/components/SEO';
 
 const Furniture = () => {
   const { t } = useTranslation();
@@ -34,6 +35,17 @@ const Furniture = () => {
 
   return (
     <div>
+      <SEO
+        title={t('furniture.title')}
+        description={t('furniture.subtitle')}
+        canonical="/furniture"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: t('furniture.title'),
+          description: t('furniture.subtitle'),
+        }}
+      />
       <section className="relative py-20 bg-primary text-center">
         <div className="absolute inset-0">
           <img

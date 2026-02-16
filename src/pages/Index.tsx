@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Shield, Users, Clock, Award } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/products';
+import SEO from '@/components/SEO';
 
 const HeroScene = lazy(() => import('@/components/HeroScene'));
 
@@ -23,7 +24,19 @@ const Index = () => {
 
   return (
     <div>
-      {/* Hero */}
+      <SEO
+        title={t('hero.title')}
+        description={t('hero.subtitle')}
+        canonical="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'Elite Works',
+          url: 'https://eliteworks.ge',
+          description: t('hero.subtitle'),
+          contactPoint: { '@type': 'ContactPoint', telephone: '+995500057527', contactType: 'sales' },
+        }}
+      />
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-primary">
         {/* 3D Background */}
         <Suspense fallback={null}>

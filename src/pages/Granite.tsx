@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTabs from '@/components/CategoryTabs';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/products';
+import SEO from '@/components/SEO';
 
 const Granite = () => {
   const { t } = useTranslation();
@@ -33,6 +34,17 @@ const Granite = () => {
 
   return (
     <div>
+      <SEO
+        title={t('granite.title')}
+        description={t('granite.subtitle')}
+        canonical="/granite"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: t('granite.title'),
+          description: t('granite.subtitle'),
+        }}
+      />
       {/* Mini Hero */}
       <section className="relative py-20 bg-primary text-center">
         <div className="absolute inset-0">

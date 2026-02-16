@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Award, Users, Shield, Clock } from 'lucide-react';
+import SEO from '@/components/SEO';
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -21,6 +22,17 @@ const About = () => {
 
   return (
     <div>
+      <SEO
+        title={t('about.title')}
+        description={t('about.subtitle')}
+        canonical="/about"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          name: t('about.title'),
+          description: t('about.subtitle'),
+        }}
+      />
       {/* Hero */}
       <section className="relative py-24 bg-primary text-center">
         <div className="relative z-10 container mx-auto px-4">

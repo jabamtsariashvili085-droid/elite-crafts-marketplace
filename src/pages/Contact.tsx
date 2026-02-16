@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Phone, Mail, MessageCircle, Send, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import SEO from '@/components/SEO';
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -39,6 +40,17 @@ const Contact = () => {
 
   return (
     <div>
+      <SEO
+        title={t('contact.title')}
+        description={t('contact.subtitle')}
+        canonical="/contact"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'ContactPage',
+          name: t('contact.title'),
+          description: t('contact.subtitle'),
+        }}
+      />
       <section className="relative py-24 bg-primary text-center">
         <div className="relative z-10 container mx-auto px-4">
           <motion.h1 {...fadeUp} className="text-3xl md:text-5xl font-bold text-primary-foreground">
