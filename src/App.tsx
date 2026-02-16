@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminMessages from "./pages/AdminMessages";
 import NotFound from "./pages/NotFound";
+import Install from "./pages/Install";
 import "./i18n";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/install" element={<Install />} />
           </Route>
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
