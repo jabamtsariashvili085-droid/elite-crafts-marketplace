@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Home",
+    "granite": "Granite Countertops",
+    "furniture": "Furniture",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Premium Granite & Furniture for Your Home",
+    "subtitle": "Professional Craftsmen — Unique Design",
+    "cta": "View Portfolio"
+  },
+  "stats": {
+    "projects": "Completed Projects",
+    "clients": "Happy Clients",
+    "experience": "Years of Experience"
+  },
+  "categories": {
+    "all": "All",
+    "kitchen": "Kitchen",
+    "bathroom": "Bathroom",
+    "bar": "Bar",
+    "fireplace": "Fireplace",
+    "living": "Living Room",
+    "bedroom": "Bedroom",
+    "dining": "Dining Room",
+    "office": "Office",
+    "kids": "Kids Room"
+  },
+  "buttons": {
+    "viewMore": "View More",
+    "details": "Details",
+    "contactUs": "Contact Us",
+    "send": "Send"
+  },
+  "granite": {
+    "title": "Granite Countertops",
+    "subtitle": "Professional granite countertops for your home"
+  },
+  "furniture": {
+    "title": "Furniture",
+    "subtitle": "Create your perfect home"
+  },
+  "whyUs": {
+    "title": "Why Choose Us?",
+    "quality": "Quality",
+    "qualityDesc": "Only the highest quality materials",
+    "individual": "Individual Approach",
+    "individualDesc": "We consider your wishes and needs",
+    "warranty": "Warranty",
+    "warrantyDesc": "Warranty on all products",
+    "delivery": "Fast Delivery",
+    "deliveryDesc": "Timely delivery and installation"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "10+ years of experience in granite and furniture",
+    "story": "Our Story",
+    "storyText": "Elite Works was founded in 2014 as a small craft workshop. Today, we are one of the leading companies in Georgia, specializing in the production of granite countertops and high-quality furniture.",
+    "mission": "Mission",
+    "missionText": "Our mission is to create unique and quality products that beautify your home and create a comfortable environment.",
+    "process": "Our Process",
+    "step1": "Consultation",
+    "step2": "Design",
+    "step3": "Production",
+    "step4": "Installation"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Get in touch with us anytime",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "message": "Message",
+    "success": "Message sent successfully!",
+    "workHours": "Working Hours",
+    "weekdays": "Monday - Friday: 9:00 - 18:00",
+    "saturday": "Saturday: 10:00 - 16:00"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "description": "Granite countertops and furniture in Georgia"
+  }
+}
