@@ -12,6 +12,7 @@ import Granite from "./pages/Granite";
 import Furniture from "./pages/Furniture";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import ProductDetail from "./pages/ProductDetail";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
@@ -33,9 +34,10 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/granite" element={<Granite />} />
               <Route path="/furniture" element={<Furniture />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-            </Route>
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+          </Route>
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
               <Route path="dashboard" element={<AdminDashboard />} />
