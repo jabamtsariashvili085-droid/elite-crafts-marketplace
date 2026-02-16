@@ -6,6 +6,7 @@ import { Shield, Users, Clock, Award } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/products';
 import SEO from '@/components/SEO';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const HeroScene = lazy(() => import('@/components/HeroScene'));
 
@@ -18,7 +19,7 @@ const fadeUp = {
 
 const Index = () => {
   const { t } = useTranslation();
-
+  const isMobile = useIsMobile();
   const featuredGranite = products.filter(p => p.category === 'granite' && p.featured).slice(0, 6);
   const featuredFurniture = products.filter(p => p.category === 'furniture' && p.featured).slice(0, 6);
 
@@ -38,10 +39,12 @@ const Index = () => {
         }}
       />
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-primary">
-        {/* 3D Background */}
-        <Suspense fallback={null}>
-          <HeroScene />
-        </Suspense>
+        {/* 3D Background - disabled on mobile for performance */}
+        {!isMobile && (
+          <Suspense fallback={null}>
+            <HeroScene />
+          </Suspense>
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/30 to-primary/70 z-[1]" />
         <div className="relative z-[2] container mx-auto px-4 text-center">
           <motion.div
