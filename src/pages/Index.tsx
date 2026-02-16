@@ -1,9 +1,12 @@
+import { Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Shield, Users, Clock, Award } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/products';
+
+const HeroScene = lazy(() => import('@/components/HeroScene'));
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -22,15 +25,12 @@ const Index = () => {
     <div>
       {/* Hero */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-primary">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&h=1080&fit=crop"
-            alt="Hero"
-            className="w-full h-full object-cover opacity-30"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/80" />
-        </div>
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        {/* 3D Background */}
+        <Suspense fallback={null}>
+          <HeroScene />
+        </Suspense>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/30 to-primary/70 z-[1]" />
+        <div className="relative z-[2] container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
