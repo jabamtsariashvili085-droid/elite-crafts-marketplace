@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MessageCircle, Send, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -20,10 +21,19 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    // Simulate sending (will connect to Supabase later)
-    await new Promise(r => setTimeout(r, 1000));
-    toast({ title: t('contact.success') });
-    setForm({ name: '', phone: '', email: '', message: '' });
+    try {
+      const { error } = await supabase.from('contact_messages').insert({
+        name: form.name,
+        phone: form.phone,
+        email: form.email || null,
+        message: form.message,
+      });
+      if (error) throw error;
+      toast({ title: t('contact.success') });
+      setForm({ name: '', phone: '', email: '', message: '' });
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+    }
     setSending(false);
   };
 
