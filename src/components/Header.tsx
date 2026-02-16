@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Globe, Search, Sun, Moon } from 'lucide-react';
+import SearchModal from './SearchModal';
 
 const languages = [
   { code: 'ka', label: 'ქართული', flag: '🇬🇪' },
@@ -16,6 +17,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
@@ -117,6 +119,14 @@ const Header = () => {
               </AnimatePresence>
             </div>
 
+            {/* Search */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 rounded-lg text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Search size={20} />
+            </button>
+
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
@@ -180,6 +190,8 @@ const Header = () => {
           </>
         )}
       </AnimatePresence>
+
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 };
