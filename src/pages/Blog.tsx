@@ -1,18 +1,15 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
-import { Calendar, User, ArrowRight } from 'lucide-react';
-import LazyImage from '@/components/LazyImage';
 import SEO from '@/components/SEO';
-import GlowCard from '@/components/GlowCard';
 import FlipCard from '@/components/FlipCard';
+import { motion } from 'framer-motion';
 
 interface Article {
     id: string;
     title: string;
     slug: string;
-    content: string; // Markdown or HTML
+    content: string;
     image: string;
     created_at: string;
     author: string;
@@ -33,49 +30,74 @@ const Blog = () => {
     });
 
     return (
-        <div className="min-h-screen bg-surface pb-20">
+        <div className="min-h-screen pb-20">
             <SEO
                 title="ბლოგი - Elite Works"
                 description="სიახლეები, რჩევები და სტატიები ქვისა და ავეჯის შესახებ"
                 canonical="/blog"
             />
 
-            <div className="bg-gold-gradient py-16 text-accent-foreground text-center">
-                <h1 className="text-4xl font-bold mb-4">ბლოგი & სიახლეები</h1>
-                <p className="text-lg opacity-90 max-w-2xl mx-auto px-4">
-                    გაიგეთ მეტი გრანიტის მოვლის, ინტერიერის დიზაინისა და თანამედროვე ტენდენციების შესახებ
-                </p>
+            {/* Premium Header Section */}
+            <div className="relative py-24 overflow-hidden">
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-md z-0" />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="container mx-auto px-4 relative z-10 text-center"
+                >
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gold drop-shadow-lg uppercase tracking-tighter">
+                        ბლოგი <span className="text-white">&</span> სიახლეები
+                    </h1>
+                    <div className="w-24 h-1 bg-gold mx-auto mb-8 rounded-full" />
+                    <p className="text-xl text-gray-300 max-w-2xl mx-auto px-4 font-light leading-relaxed">
+                        აღმოაჩინეთ უახლესი ტენდენციები, ექსკლუზიური რჩევები და პროფესიონალური მიდგომები ქვისა და ავეჯის სამყაროში.
+                    </p>
+                </motion.div>
             </div>
 
-            <div className="container mx-auto px-4 py-12">
+            {/* Articles Grid */}
+            <div className="container mx-auto px-4 py-20">
                 {isLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="aspect-[4/3] bg-muted rounded-xl animate-pulse" />
+                            <div key={i} className="aspect-[3/4] bg-white/5 rounded-2xl animate-pulse border border-white/10" />
                         ))}
                     </div>
                 ) : articles && articles.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {articles.map((article) => (
-                            <Link
-                                to={`/blog/${article.slug}`}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center"
+                    >
+                        {articles.map((article, index) => (
+                            <motion.div
                                 key={article.id}
-                                className="flex justify-center"
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 + 0.5 }}
+                                className="w-full max-w-[300px]"
                             >
-                                <FlipCard
-                                    title={article.title}
-                                    description={article.content.substring(0, 100) + "..."}
-                                    badge="სტატია"
-                                    image={article.image || 'https://placehold.co/600x400/e2e8f0/64748b?text=Article'}
-                                    footer={`${new Date(article.created_at).toLocaleDateString('ka-GE')} | ${article.author || 'Admin'}`}
-                                    className="w-full"
-                                />
-                            </Link>
+                                <Link to={`/blog/${article.slug}`}>
+                                    <FlipCard
+                                        title={article.title}
+                                        description={(article.content || "").replace(/<[^>]*>/g, '').substring(0, 140) + "..."}
+                                        badge="პრემიუმ სტატია"
+                                        image={article.image || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=600&auto=format&fit=crop'}
+                                        footer={`${new Date(article.created_at).toLocaleDateString('ka-GE')} | Elite Works`}
+                                        className="w-full"
+                                    />
+                                </Link>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 ) : (
-                    <div className="text-center py-20">
-                        <p className="text-muted-foreground text-lg">სტატიები ჯერ არ დამატებულა.</p>
+                    <div className="text-center py-32 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm">
+                        <p className="text-gray-400 text-xl font-light">სტატიები ჯერ არ დამატებულა.</p>
+                        <Link to="/" className="mt-8 inline-block text-gold hover:text-white transition-colors underline decoration-gold/30">
+                            დაბრუნდით მთავარზე
+                        </Link>
                     </div>
                 )}
             </div>
