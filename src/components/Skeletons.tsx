@@ -1,4 +1,4 @@
-const ProductCardSkeleton = () => (
+export const ProductCardSkeleton = () => (
   <div className="bg-card rounded-xl overflow-hidden border border-border shadow-sm">
     <div className="aspect-[4/3] bg-muted animate-pulse" />
     <div className="p-4 space-y-3">

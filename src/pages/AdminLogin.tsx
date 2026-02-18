@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Lock, Mail } from 'lucide-react';
 
@@ -12,8 +12,7 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
 
   if (user) {
-    navigate('/admin/dashboard', { replace: true });
-    return null;
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

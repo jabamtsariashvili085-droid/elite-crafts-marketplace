@@ -34,16 +34,16 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-3 text-foreground">{t('contact.title')}</h4>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <a href="tel:+995500057527" className="flex items-center gap-2 hover:text-gold transition-colors">
-                <Phone size={14} /> +995 500 05 75 27
+              <a href="tel:+995579909808" className="flex items-center gap-2 hover:text-gold transition-colors">
+                <Phone size={14} /> +995 579 909 808
               </a>
               <a href="mailto:j19mt85@gmail.com" className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Mail size={14} /> j19mt85@gmail.com
               </a>
-              <a href="https://wa.me/995500057527" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href="https://wa.me/995579909808" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
                 <MessageCircle size={14} /> WhatsApp
               </a>
-              <a href="https://t.me/+995500057527" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
+              <a href="https://t.me/+995579909808" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Send size={14} /> Telegram
               </a>
             </div>

@@ -1,324 +1,257 @@
-import { useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, MeshWobbleMaterial, Stars, Environment } from '@react-three/drei';
+import { useState, useEffect, useCallback } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Image, Float, Sparkles, Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mouse-tracking camera rig
-const CameraRig = () => {
-  const { camera } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
-  const target = useRef({ x: 0, y: 0 });
+interface Slide {
+  id: string;
+  image: string;
+  title_ka: string;
+  title_en: string;
+  title_ru: string;
+  subtitle_ka: string;
+  subtitle_en: string;
+  subtitle_ru: string;
+  link: string;
+  title?: string;
+  subtitle?: string;
+}
 
-  useMemo(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
-      mouse.current.y = (e.clientY / window.innerHeight - 0.5) * 2;
-    };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
+const defaultSlides: Slide[] = [
+  {
+    id: 'default-granite',
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&h=1080&fit=crop&q=80',
+    title_ka: 'გრანიტი და ქვა', title_en: 'Granite & Stone', title_ru: 'Гранит и камень',
+    subtitle_ka: 'უმაღლესი ხარისხის ბუნებრივი ქვა', subtitle_en: 'Premium natural stone', subtitle_ru: 'Натуральный камень премиум-класса',
+    link: '/granite',
+  },
+  {
+    id: 'default-furniture',
+    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1920&h=1080&fit=crop&q=80',
+    title_ka: 'ავეჯი და დიზაინი', title_en: 'Furniture & Design', title_ru: 'Мебель и дизайн',
+    subtitle_ka: 'თანამედროვე და კლასიკური ავეჯი', subtitle_en: 'Modern and classic furniture', subtitle_ru: 'Современная и классическая мебель',
+    link: '/furniture',
+  },
+  {
+    id: 'default-cnc',
+    image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1920&h=1080&fit=crop&q=80',
+    title_ka: 'CNC სერვისი', title_en: 'CNC Services', title_ru: 'Услуги ЧПУ',
+    subtitle_ka: 'ინოვაციური CNC ტექნოლოგია', subtitle_en: 'Innovative CNC technology', subtitle_ru: 'Инновационные технологии ЧПУ',
+    link: '/cnc',
+  },
+];
 
-  useFrame(() => {
-    target.current.x += (mouse.current.x - target.current.x) * 0.03;
-    target.current.y += (mouse.current.y - target.current.y) * 0.03;
-    camera.position.x = target.current.x * 1.2;
-    camera.position.y = -target.current.y * 0.8;
-    camera.lookAt(0, 0, 0);
-  });
+const GoldMaterial = new THREE.MeshStandardMaterial({
+  color: "#FFD700",
+  metalness: 1,
+  roughness: 0.1,
+  emissive: "#B8860B",
+  emissiveIntensity: 0.2
+});
 
-  return null;
-};
-
-// Polished granite countertop slab
-const GraniteCountertop = ({ position, scale, color, rotation = [0, 0, 0] }: {
-  position: [number, number, number]; scale: number; color: string; rotation?: [number, number, number];
-}) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y += 0.002;
-    ref.current.rotation.x = rotation[0] + Math.sin(state.clock.elapsedTime * 0.25) * 0.05;
-  });
-
+const FloatingShapes = () => {
   return (
-    <Float speed={1.2} rotationIntensity={0.3} floatIntensity={0.5}>
-      <mesh ref={ref} position={position} scale={scale} rotation={rotation}>
-        <boxGeometry args={[2.2, 0.18, 1.4]} />
-        <MeshDistortMaterial
-          color={color}
-          roughness={0.15}
-          metalness={0.7}
-          distort={0.08}
-          speed={1.5}
-          envMapIntensity={1.2}
-        />
-        {/* Edge highlight */}
-        <mesh position={[0, 0.1, 0]}>
-          <boxGeometry args={[2.22, 0.02, 1.42]} />
-          <meshStandardMaterial color="#D4AF37" roughness={0.2} metalness={0.9} opacity={0.3} transparent />
+    <group>
+      <Float speed={1.5} rotationIntensity={1} floatIntensity={1}>
+        <mesh position={[-5, 2, -2]} rotation={[0.5, 0.5, 0]}>
+          <torusGeometry args={[0.3, 0.08, 16, 32]} />
+          <primitive object={GoldMaterial} />
         </mesh>
-      </mesh>
-    </Float>
-  );
-};
-
-// Detailed chair
-const Chair = ({ position, scale }: { position: [number, number, number]; scale: number }) => {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.35) * 0.4 + Math.PI * 0.2;
-  });
-
-  return (
-    <Float speed={1} rotationIntensity={0.2} floatIntensity={0.4}>
-      <group ref={ref} position={position} scale={scale}>
-        {/* Seat */}
-        <mesh position={[0, 0.45, 0]}>
-          <boxGeometry args={[0.5, 0.06, 0.5]} />
-          <meshStandardMaterial color="#A0522D" roughness={0.35} metalness={0.15} />
+      </Float>
+      <Float speed={2} rotationIntensity={2} floatIntensity={1.5}>
+        <mesh position={[5, -1, -3]} rotation={[0, 1, 0.5]}>
+          <icosahedronGeometry args={[0.4, 0]} />
+          <primitive object={GoldMaterial} />
         </mesh>
-        {/* Backrest */}
-        <mesh position={[0, 0.8, -0.22]}>
-          <boxGeometry args={[0.46, 0.65, 0.05]} />
-          <meshStandardMaterial color="#8B4513" roughness={0.4} metalness={0.1} />
+      </Float>
+      <Float speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
+        <mesh position={[4, 3, -4]}>
+          <boxGeometry args={[0.2, 0.2, 0.2]} />
+          <primitive object={GoldMaterial} />
         </mesh>
-        {/* Legs */}
-        {[[-0.2, 0.2, -0.2], [0.2, 0.2, -0.2], [-0.2, 0.2, 0.2], [0.2, 0.2, 0.2]].map((p, i) => (
-          <mesh key={i} position={p as [number, number, number]}>
-            <cylinderGeometry args={[0.025, 0.03, 0.45, 8]} />
-            <meshStandardMaterial color="#6B3A0A" roughness={0.5} />
-          </mesh>
-        ))}
-      </group>
-    </Float>
-  );
-};
-
-// Table with realistic proportions
-const Table = ({ position, scale }: { position: [number, number, number]; scale: number }) => {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.25 + Math.PI * 0.1;
-  });
-
-  return (
-    <Float speed={1.1} rotationIntensity={0.25} floatIntensity={0.45}>
-      <group ref={ref} position={position} scale={scale}>
-        {/* Tabletop */}
-        <mesh position={[0, 0.55, 0]}>
-          <boxGeometry args={[1.8, 0.08, 0.9]} />
-          <meshStandardMaterial color="#8B6914" roughness={0.3} metalness={0.25} />
+      </Float>
+      <Float speed={2.5} rotationIntensity={1.5} floatIntensity={0.8}>
+        <mesh position={[-3, -2.5, -1]}>
+          <octahedronGeometry args={[0.25]} />
+          <primitive object={GoldMaterial} />
         </mesh>
-        {/* Tabletop edge bevel */}
-        <mesh position={[0, 0.52, 0]}>
-          <boxGeometry args={[1.84, 0.03, 0.94]} />
-          <meshStandardMaterial color="#7A5C10" roughness={0.4} metalness={0.2} />
-        </mesh>
-        {/* Legs - tapered */}
-        {[[-0.75, 0.24, -0.35], [0.75, 0.24, -0.35], [-0.75, 0.24, 0.35], [0.75, 0.24, 0.35]].map((p, i) => (
-          <mesh key={i} position={p as [number, number, number]}>
-            <cylinderGeometry args={[0.035, 0.05, 0.55, 8]} />
-            <meshStandardMaterial color="#6B4F12" roughness={0.45} metalness={0.15} />
-          </mesh>
-        ))}
-        {/* Cross brace */}
-        <mesh position={[0, 0.15, 0]} rotation={[0, 0, 0]}>
-          <boxGeometry args={[1.4, 0.03, 0.03]} />
-          <meshStandardMaterial color="#6B4F12" roughness={0.5} />
-        </mesh>
-      </group>
-    </Float>
-  );
-};
-
-// Marble vase
-const Vase = ({ position }: { position: [number, number, number] }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y += 0.005;
-    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.6) * 0.15;
-  });
-
-  return (
-    <Float speed={0.8} rotationIntensity={0.15} floatIntensity={0.3}>
-      <mesh ref={ref} position={position}>
-        <latheGeometry args={[
-          [
-            new THREE.Vector2(0, 0),
-            new THREE.Vector2(0.15, 0.05),
-            new THREE.Vector2(0.2, 0.15),
-            new THREE.Vector2(0.18, 0.35),
-            new THREE.Vector2(0.12, 0.5),
-            new THREE.Vector2(0.1, 0.55),
-            new THREE.Vector2(0.13, 0.6),
-          ],
-          24
-        ]} />
-        <MeshDistortMaterial
-          color="#e8e0d0"
-          roughness={0.2}
-          metalness={0.4}
-          distort={0.05}
-          speed={1}
-        />
-      </mesh>
-    </Float>
-  );
-};
-
-// Gold accent objects
-const GoldRing = ({ position, rotationSpeed = 1 }: { position: [number, number, number]; rotationSpeed?: number }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.rotation.x = state.clock.elapsedTime * 0.5 * rotationSpeed;
-    ref.current.rotation.z = state.clock.elapsedTime * 0.3 * rotationSpeed;
-    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.7 + position[0]) * 0.2;
-  });
-
-  return (
-    <mesh ref={ref} position={position}>
-      <torusGeometry args={[0.18, 0.04, 16, 32]} />
-      <meshStandardMaterial color="#D4AF37" roughness={0.15} metalness={0.95} />
-    </mesh>
-  );
-};
-
-const GoldSphere = ({ position }: { position: [number, number, number] }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8 + position[0] * 2) * 0.25;
-  });
-
-  return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[0.12, 32, 32]} />
-      <MeshWobbleMaterial color="#D4AF37" factor={0.25} speed={1.2} roughness={0.15} metalness={0.95} />
-    </mesh>
-  );
-};
-
-// Diamond shape accent
-const Diamond = ({ position }: { position: [number, number, number] }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y = state.clock.elapsedTime * 0.6;
-    ref.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.4) * 0.3;
-    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.2;
-  });
-
-  return (
-    <mesh ref={ref} position={position}>
-      <octahedronGeometry args={[0.15, 0]} />
-      <meshStandardMaterial color="#D4AF37" roughness={0.1} metalness={0.95} />
-    </mesh>
-  );
-};
-
-// Enhanced particles with varying sizes
-const Particles = () => {
-  const count = 120;
-  const ref = useRef<THREE.Points>(null!);
-
-  const [positions, sizes] = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const sz = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 8;
-      sz[i] = Math.random() * 0.04 + 0.01;
-    }
-    return [pos, sz];
-  }, []);
-
-  useFrame((state) => {
-    ref.current.rotation.y = state.clock.elapsedTime * 0.015;
-    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.05;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
-      </bufferGeometry>
-      <pointsMaterial size={0.035} color="#D4AF37" transparent opacity={0.5} sizeAttenuation />
-    </points>
-  );
-};
-
-// Glowing orb for atmosphere
-const GlowOrb = ({ position, color, size = 0.5 }: { position: [number, number, number]; color: string; size?: number }) => {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    const s = size + Math.sin(state.clock.elapsedTime * 0.8) * 0.05;
-    ref.current.scale.setScalar(s);
-  });
-
-  return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[1, 16, 16]} />
-      <meshBasicMaterial color={color} transparent opacity={0.06} />
-    </mesh>
-  );
-};
-
-const Scene = () => {
-  return (
-    <>
-      <CameraRig />
-
-      {/* Lighting */}
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[5, 5, 5]} intensity={0.9} color="#fff5e0" castShadow />
-      <directionalLight position={[-3, 3, -3]} intensity={0.3} color="#D4AF37" />
-      <pointLight position={[-4, 2, -2]} intensity={0.6} color="#D4AF37" distance={10} />
-      <pointLight position={[3, -1, 2]} intensity={0.4} color="#8B6914" distance={8} />
-      <spotLight position={[0, 4, 2]} angle={0.4} penumbra={0.8} intensity={0.5} color="#fff" />
-
-      {/* Granite countertops */}
-      <GraniteCountertop position={[-2.5, 0.6, -1.5]} scale={0.85} color="#3a3a3a" rotation={[0.05, 0.3, 0]} />
-      <GraniteCountertop position={[2.8, -0.2, -1]} scale={0.65} color="#5a5a5a" rotation={[-0.03, -0.5, 0.02]} />
-      <GraniteCountertop position={[-0.8, -1.2, -2]} scale={0.55} color="#2a2a2a" rotation={[0.02, 0.8, -0.01]} />
-      <GraniteCountertop position={[1, 1.5, -2.5]} scale={0.45} color="#707070" rotation={[0.1, -0.2, 0.05]} />
-
-      {/* Furniture */}
-      <Table position={[0.5, 0.3, -1.2]} scale={0.7} />
-      <Chair position={[-1.5, -0.5, 0]} scale={0.9} />
-      <Vase position={[2.2, 0.8, -0.5]} />
-
-      {/* Gold accents */}
-      <GoldRing position={[-2, 1.5, 0.5]} rotationSpeed={0.8} />
-      <GoldRing position={[3, -0.8, -0.3]} rotationSpeed={1.2} />
-      <GoldSphere position={[-1.2, -1, 0.5]} />
-      <GoldSphere position={[1.5, 1.8, -0.8]} />
-      <GoldSphere position={[-3, 0.2, -0.5]} />
-      <Diamond position={[0.3, -1.5, 0.3]} />
-      <Diamond position={[-2.5, -0.8, 0.8]} />
-      <Diamond position={[2.8, 1.3, 0.2]} />
-
-      {/* Atmospheric glows */}
-      <GlowOrb position={[-2, 0, -1]} color="#D4AF37" size={0.8} />
-      <GlowOrb position={[2, 1, -1.5]} color="#8B6914" size={0.6} />
-
-      <Particles />
-      <Stars radius={10} depth={40} count={300} factor={2.5} saturation={0} fade speed={0.4} />
-
-      <Environment preset="city" />
-    </>
-  );
-};
+      </Float>
+    </group>
+  )
+}
 
 const HeroScene = () => {
+  const { t, i18n } = useTranslation();
+  const [current, setCurrent] = useState(0);
+  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [usingDefaults, setUsingDefaults] = useState(true);
+
+  useEffect(() => {
+    fetchSlides();
+  }, []);
+
+  const fetchSlides = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('hero_slides')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        setSlides(data);
+        setUsingDefaults(false);
+      }
+    } catch (error) {
+      console.error('Error fetching hero slides:', error);
+    }
+  };
+
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const prev = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
+  const goTo = useCallback((index: number) => {
+    setCurrent(index);
+  }, []);
+
+  // Auto-advance
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const timer = setInterval(next, 6000);
+    return () => clearInterval(timer);
+  }, [next, slides.length]);
+
+  const slide = slides[current];
+
+  // Language helper
+  const getLangText = (obj: any, prefix: string) => {
+    // If using defaults and old structure, fall back
+    if (usingDefaults && !obj[prefix + '_en'] && !obj[prefix + '_ka']) {
+      return t(obj[prefix + 'Key']) || t(obj[prefix]);
+    }
+    const lang = i18n.language.slice(0, 2) as 'ka' | 'en' | 'ru';
+    return obj[`${prefix}_${lang}`] || obj[`${prefix}_en`] || '';
+  };
+
+  const titleText = getLangText(slide, 'title');
+  const subtitleText = getLangText(slide, 'subtitle');
+
   return (
-    <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ position: [0, 0, 5.5], fov: 48 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
-        style={{ background: 'transparent' }}
-      >
-        <Scene />
+    <div className="absolute inset-0 z-0 bg-primary overflow-hidden">
+      {/* 3D Scene */}
+      <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+        <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={50} />
+        <Environment preset="city" />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} color="#FFD700" />
+        <spotLight position={[-10, -10, -10]} intensity={0.5} color="blue" />
+
+        <FloatingShapes />
+
+        <Sparkles count={50} scale={12} size={2} speed={0.4} opacity={0.5} color="#FFD700" />
+
+        {/* The Main Image - Floating */}
+        <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2} floatingRange={[-0.1, 0.1]}>
+          <group position={[0, 0, 0]}>
+            <Image
+              key={slide.image} // Force re-mount for transition or handled by Image? Image handles texture switch but key ensures fresh fade
+              url={slide.image}
+              scale={[9, 5]} // Large scale
+              transparent
+              opacity={0.9}
+              radius={0.05}
+            >
+              {/* Bentonite? No, just Image */}
+            </Image>
+            {/* Shadow below */}
+            <ContactShadows position={[0, -2.6, 0]} opacity={0.5} blur={2.5} scale={10} color="black" />
+          </group>
+        </Float>
       </Canvas>
+
+      {/* Dark Gradient Overlay for text readability (Critical for 3D bg) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50 pointer-events-none" />
+
+      {/* HTML Content Overlay */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <div className="container mx-auto px-4 text-center pointer-events-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide.id}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 1.05 }}
+              transition={{ duration: 0.5 }}
+              className="mt-20 md:mt-0"
+            >
+              {/* Gold Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-black/40 backdrop-blur-md mb-6 shadow-gold/10 shadow-lg">
+                <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+                <span className="text-gold text-sm font-medium tracking-wider uppercase">
+                  Elite Collection
+                </span>
+              </div>
+
+              <h1 className="text-3xl md:text-5xl lg:text-7xl font-extrabold text-white leading-tight font-heading drop-shadow-2xl">
+                {titleText}
+              </h1>
+
+              <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
+                {subtitleText}
+              </p>
+
+              <div className="mt-10">
+                <Link
+                  to={slide.link}
+                  className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-gold-gradient text-accent-foreground font-bold text-lg shadow-gold hover:scale-110 hover:shadow-gold-lg transition-all duration-300"
+                >
+                  {t('hero.cta')}
+                </Link>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Navigation Arrows */}
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/5 border border-white/10 text-white backdrop-blur-sm hover:bg-gold/20 hover:border-gold/50 transition-all group hidden md:block"
+          >
+            <ChevronLeft size={32} className="group-hover:scale-110 transition-transform" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/5 border border-white/10 text-white backdrop-blur-sm hover:bg-gold/20 hover:border-gold/50 transition-all group hidden md:block"
+          >
+            <ChevronRight size={32} className="group-hover:scale-110 transition-transform" />
+          </button>
+        </>
+      )}
+
+      {/* Dots */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        {slides.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => goTo(i)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${current === i ? 'bg-gold w-8 shadow-gold' : 'bg-white/30 hover:bg-white/50'
+              }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };

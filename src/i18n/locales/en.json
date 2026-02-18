@@ -1,15 +1,56 @@
 {
   "nav": {
     "home": "Home",
-    "granite": "Granite Countertops",
+    "granite": "Granite Sinks",
     "furniture": "Furniture",
+    "cnc": "CNC",
+    "visualizer": "Visualizer",
+    "blog": "Blog",
     "about": "About Us",
     "contact": "Contact"
   },
   "hero": {
-    "title": "Premium Granite & Furniture for Your Home",
-    "subtitle": "Professional Craftsmen — Unique Design",
-    "cta": "View Portfolio"
+    "badge": "Premium Kitchen Design",
+    "title1": "",
+    "title2": "Granite Sinks",
+    "title3": "& CNC Parametric Reception",
+    "subtitle": "Elegant kitchen granite sinks and parametric wall reception desks — crafted from the highest quality natural stone",
+    "card1Title": "Kitchen",
+    "card1Desc": "Modern kitchen design",
+    "card2Title": "Granite Sink",
+    "card2Desc": "Elegance of natural black stone",
+    "card3Title": "CNC Reception",
+    "card3Desc": "Parametric wall design",
+    "ctaCatalog": "View Catalog",
+    "ctaContact": "Contact Us",
+    "scroll": "scroll",
+    "ourProducts": "Our Products",
+    "productsSubtitle": "Kitchen, Granite Sink, and CNC Reception — Quality and Aesthetics",
+    "modernKitchen": "Modern Kitchen",
+    "modernKitchenDesc": "Full kitchen design — cabinets, surfaces, appliances, and lighting",
+    "feat1": "Natural Granite",
+    "feat1Desc": "Highest quality natural stone, durable to any temperature and impact",
+    "feat2": "Integrated Sink",
+    "feat2Desc": "Unified design with the kitchen surface, seamless installation",
+    "feat3": "CNC Processing",
+    "feat3Desc": "Parametric design processing with computer precision",
+    "feat4": "Individual Dimensions",
+    "feat4Desc": "Dimensions and shapes tailored to your kitchen"
+  },
+  "reviews": {
+    "title": "Customer Reviews",
+    "loading": "Loading...",
+    "empty": "No reviews yet.",
+    "beFirst": "Be the first!",
+    "write": "Write a Review",
+    "name": "Your Name",
+    "rating": "Rating",
+    "comment": "Comment",
+    "commentPlaceholder": "What do you think about this product?",
+    "submitting": "Submitting...",
+    "send": "Send",
+    "success": "Thank you! Your review has been sent for moderation.",
+    "error": "Failed to submit review."
   },
   "stats": {
     "projects": "Completed Projects",
@@ -26,7 +67,12 @@
     "bedroom": "Bedroom",
     "dining": "Dining Room",
     "office": "Office",
-    "kids": "Kids Room"
+    "kids": "Kids Room",
+    "parametric": "Parametric Design",
+    "shelf": "Shelves",
+    "panel": "Wall Panels",
+    "signage": "Signs & Logos",
+    "decor": "Decoration"
   },
   "buttons": {
     "viewMore": "View More",
@@ -40,22 +86,28 @@
   "product": {
     "dimensions": "Dimensions",
     "material": "Material",
-    "similar": "Similar Products"
+    "similar": "Similar Products",
+    "featured": "Featured",
+    "notFound": "Product not found"
   },
   "granite": {
-    "title": "Granite Countertops",
-    "subtitle": "Professional granite countertops for your home"
+    "title": "Granite Sinks",
+    "subtitle": "Professional granite sinks for your home"
   },
   "furniture": {
     "title": "Furniture",
     "subtitle": "Create your perfect home"
+  },
+  "cnc": {
+    "title": "CNC Products",
+    "subtitle": "Unique items crafted with innovative CNC technology"
   },
   "whyUs": {
     "title": "Why Choose Us?",
     "quality": "Quality",
     "qualityDesc": "Only the highest quality materials",
     "individual": "Individual Approach",
-    "individualDesc": "We consider your wishes and needs",
+    "individualDesc": "Considering your wishes and needs",
     "warranty": "Warranty",
     "warrantyDesc": "Warranty on all products",
     "delivery": "Fast Delivery",
@@ -65,10 +117,10 @@
     "title": "About Us",
     "subtitle": "10+ years of experience in granite and furniture",
     "story": "Our Story",
-    "storyText": "Elite Works was founded in 2014 as a small craft workshop. Today, we are one of the leading companies in Georgia, specializing in the production of granite countertops and high-quality furniture.",
+    "storyText": "Elite Works was founded in 2014 as a small workshop. Today, we are one of the leading companies in Georgia, specializing in the production of granite sinks and high-quality furniture.",
     "mission": "Mission",
     "missionText": "Our mission is to create unique and quality products that beautify your home and create a comfortable environment.",
-    "process": "Our Process",
+    "process": "Work Process",
     "step1": "Consultation",
     "step2": "Design",
     "step3": "Production",
@@ -76,18 +128,18 @@
   },
   "contact": {
     "title": "Contact",
-    "subtitle": "Get in touch with us anytime",
+    "subtitle": "Contact us any time",
     "name": "Name",
     "phone": "Phone",
     "email": "Email",
     "message": "Message",
     "success": "Message sent successfully!",
-    "workHours": "Working Hours",
+    "workHours": "Work Hours",
     "weekdays": "Monday - Friday: 9:00 - 18:00",
     "saturday": "Saturday: 10:00 - 16:00"
   },
   "footer": {
     "rights": "All rights reserved",
-    "description": "Granite countertops and furniture in Georgia"
+    "description": "Granite sinks and furniture in Georgia"
   }
 }

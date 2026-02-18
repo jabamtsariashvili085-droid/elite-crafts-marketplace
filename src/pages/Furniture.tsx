@@ -1,29 +1,52 @@
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTabs from '@/components/CategoryTabs';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
+import { ProductCardSkeleton } from '@/components/Skeletons';
 import SEO from '@/components/SEO';
 
 const Furniture = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCategory = searchParams.get('category') || 'all';
+  const productsRef = useRef<HTMLDivElement>(null);
+  const [dbCategories, setDbCategories] = useState<{ key: string, label: string }[]>([]);
 
-  const categories = [
-    { key: 'all', label: t('categories.all') },
-    { key: 'living', label: t('categories.living') },
-    { key: 'bedroom', label: t('categories.bedroom') },
-    { key: 'kitchen', label: t('categories.kitchen') },
-    { key: 'dining', label: t('categories.dining') },
-    { key: 'office', label: t('categories.office') },
-    { key: 'kids', label: t('categories.kids') },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from('product_subcategories')
+        .select('*')
+        .eq('category_name', 'furniture')
+        .order('sort_order');
 
-  const filtered = products.filter(
+      if (data) {
+        const lang = i18n.language || 'ka';
+        const dynamicCats = data.map(s => ({
+          key: s.name,
+          label: s[`label_${lang}`] || s.label_ka
+        }));
+        setDbCategories([{ key: 'all', label: t('categories.all') }, ...dynamicCats]);
+      }
+    };
+
+    fetchCategories();
+
+    const timer = setTimeout(() => {
+      productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [i18n.language, t]);
+
+  const { data: products, isLoading } = useProducts();
+
+  const filtered = products?.filter(
     p => p.category === 'furniture' && (activeCategory === 'all' || p.subcategory === activeCategory)
-  );
+  ) || [];
 
   const handleChange = (key: string) => {
     if (key === 'all') {
@@ -60,7 +83,9 @@ const Furniture = () => {
         </div>
       </section>
 
-      <CategoryTabs categories={categories} active={activeCategory} onChange={handleChange} />
+      <div ref={productsRef} className="scroll-mt-24">
+        <CategoryTabs categories={dbCategories} active={activeCategory} onChange={handleChange} />
+      </div>
 
       <section className="py-12">
         <div className="container mx-auto px-4">
@@ -73,14 +98,17 @@ const Furniture = () => {
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {filtered.map(p => (
-                <ProductCard key={p.id} product={p} />
-              ))}
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+              ) : filtered.length > 0 ? (
+                filtered.map(p => (
+                  <ProductCard key={p.id} product={p} />
+                ))
+              ) : (
+                <p className="col-span-full text-center text-muted-foreground py-20">{t('categories.all')}: 0</p>
+              )}
             </motion.div>
           </AnimatePresence>
-          {filtered.length === 0 && (
-            <p className="text-center text-muted-foreground py-20">{t('categories.all')}: 0</p>
-          )}
         </div>
       </section>
     </div>

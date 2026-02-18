@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X } from 'lucide-react';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 import { getProductTitle, getProductDescription } from '@/data/products';
 
 interface SearchModalProps {
@@ -16,6 +16,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
+  const { data: products } = useProducts();
 
   const lang = i18n.language;
 
@@ -39,22 +40,21 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  const filtered = query.trim().length > 0
+  const filtered = query.trim().length > 0 && products
     ? products.filter(p => {
-        const q = query.toLowerCase();
-        return (
-          getProductTitle(p, lang).toLowerCase().includes(q) ||
-          getProductDescription(p, lang).toLowerCase().includes(q) ||
-          p.material.toLowerCase().includes(q) ||
-          p.subcategory.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-        );
-      })
+      const q = query.toLowerCase();
+      return (
+        getProductTitle(p, lang).toLowerCase().includes(q) ||
+        getProductDescription(p, lang).toLowerCase().includes(q) ||
+        p.material.toLowerCase().includes(q) ||
+        p.subcategory.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    })
     : [];
 
-  const handleSelect = (p: typeof products[0]) => {
-    const path = p.category === 'granite' ? '/granite' : '/furniture';
-    navigate(`${path}?category=${p.subcategory}`);
+  const handleSelect = (p: any) => {
+    navigate(`/product/${p.id}`);
     onClose();
   };
 
@@ -74,7 +74,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-[10%] left-1/2 -translate-x-1/2 w-full max-w-lg z-[61] px-4"
+            className="fixed inset-4 sm:inset-auto sm:top-[10%] sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-lg z-[61] flex flex-col"
           >
             <div className="bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
               {/* Input */}

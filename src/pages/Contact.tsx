@@ -118,13 +118,13 @@ const Contact = () => {
             {/* Contact Info */}
             <motion.div {...fadeUp} transition={{ delay: 0.2 }} className="space-y-6">
               <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <a href="tel:+995500057527" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
-                  <Phone size={20} className="text-gold" /> +995 500 05 75 27
+                <a href="tel:+995579909808" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
+                  <Phone size={20} className="text-gold" /> +995 579 909 808
                 </a>
-                <a href="https://wa.me/995500057527" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
+                <a href="https://wa.me/995579909808" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
                   <MessageCircle size={20} className="text-gold" /> WhatsApp
                 </a>
-                <a href="https://t.me/+995500057527" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
+                <a href="https://t.me/+995579909808" target="_blank" rel="noreferrer" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">
                   <Send size={20} className="text-gold" /> Telegram
                 </a>
                 <a href="mailto:j19mt85@gmail.com" className="flex items-center gap-3 text-foreground hover:text-gold transition-colors">

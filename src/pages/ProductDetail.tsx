@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Phone, MessageCircle, Send, Ruler, Layers } from 'lucide-react';
-import { products, getProductTitle, getProductDescription } from '@/data/products';
+import { ArrowLeft, ChevronLeft, ChevronRight, X, Phone, MessageCircle, Send, Ruler, Layers, Check, Heart, Shield, Truck } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
+import { getProductTitle, getProductDescription } from '@/data/products';
+import { useWishlist } from '@/contexts/WishlistContext';
 import ProductCard from '@/components/ProductCard';
+import Reviews from '@/components/Reviews';
 import SEO from '@/components/SEO';
 
 const ProductDetail = () => {
@@ -13,23 +16,18 @@ const ProductDetail = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
-  const product = products.find(p => p.id === id);
+  const { data: products, isLoading } = useProducts();
+  const product = products?.find(p => p.id === id);
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
-  // Generate gallery images (main + variations using Unsplash random params)
-  const images = product
-    ? [
-        product.image,
-        product.image.replace('fit=crop', 'fit=crop&q=80') + '&sig=2',
-        product.image.replace('fit=crop', 'fit=crop&q=80') + '&sig=3',
-        product.image.replace('fit=crop', 'fit=crop&q=80') + '&sig=4',
-      ]
-    : [];
+  // Use the actual uploaded images array, or fallback to the single main image
+  const images = product?.images && product.images.length > 0
+    ? product.images
+    : (product ? [product.image] : []);
 
   useEffect(() => {
     setActiveImage(0);
-    window.scrollTo(0, 0);
   }, [id]);
 
   useEffect(() => {
@@ -43,11 +41,19 @@ const ProductDetail = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [lightboxOpen, images.length]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-muted border-t-gold rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground text-lg">პროდუქტი ვერ მოიძებნა</p>
-        <button onClick={() => navigate(-1)} className="text-gold hover:underline">← უკან</button>
+        <p className="text-muted-foreground text-lg">{t('product.notFound')}</p>
+        <button onClick={() => navigate(-1)} className="text-gold hover:underline">← {t('buttons.back')}</button>
       </div>
     );
   }
@@ -56,8 +62,8 @@ const ProductDetail = () => {
   const description = getProductDescription(product, lang);
 
   const similar = products
-    .filter(p => p.category === product.category && p.subcategory === product.subcategory && p.id !== product.id)
-    .slice(0, 4);
+    ?.filter(p => p.category === product.category && p.subcategory === product.subcategory && p.id !== product.id)
+    .slice(0, 4) || [];
 
   return (
     <div>
@@ -96,7 +102,7 @@ const ProductDetail = () => {
 
       <section className="py-8 md:py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Image Gallery */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
               {/* Main Image */}
@@ -111,20 +117,19 @@ const ProductDetail = () => {
                 />
                 {product.featured && (
                   <span className="absolute top-4 left-4 bg-gold-gradient text-accent-foreground text-xs font-semibold px-3 py-1.5 rounded-full">
-                    ⭐ Featured
+                    ⭐ {t('product.featured')}
                   </span>
                 )}
               </div>
 
               {/* Thumbnails */}
-              <div className="flex gap-2 mt-3">
+              <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
                 {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`relative w-20 h-16 rounded-xl overflow-hidden border-2 transition-all ${
-                      activeImage === i ? 'border-gold shadow-gold' : 'border-border hover:border-foreground/30'
-                    }`}
+                    className={`relative w-20 h-16 rounded-xl overflow-hidden border-2 transition-all ${activeImage === i ? 'border-gold shadow-gold' : 'border-border hover:border-foreground/30'
+                      }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -137,13 +142,13 @@ const ProductDetail = () => {
               <span className="text-sm text-muted-foreground">
                 {t(`categories.${product.subcategory}`)}
               </span>
-              <h1 className="text-2xl md:text-3xl font-bold mt-1">{title}</h1>
-              <p className="text-3xl font-extrabold text-gold mt-4">₾{product.price.toLocaleString()}</p>
+              <h1 className="text-xl md:text-2xl font-bold mt-1">{title}</h1>
+              <p className="text-2xl font-bold text-gold mt-2">₾{product.price.toLocaleString()}</p>
 
-              <p className="mt-6 text-foreground/80 leading-relaxed">{description}</p>
+              <p className="mt-4 text-foreground/80 leading-relaxed text-sm">{description}</p>
 
               {/* Specs */}
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-2 gap-3">
                 <div className="bg-surface rounded-xl p-4 flex items-center gap-3">
                   <Ruler size={20} className="text-gold shrink-0" />
                   <div>
@@ -160,8 +165,11 @@ const ProductDetail = () => {
                 </div>
               </div>
 
+              {/* Reviews Section */}
+              <Reviews productId={product.id} />
+
               {/* Contact CTA */}
-              <div className="mt-8 space-y-3">
+              <div className="mt-6 space-y-3">
                 <Link
                   to="/contact"
                   className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gold-gradient text-accent-foreground font-semibold text-lg shadow-gold hover:scale-[1.02] transition-transform"
@@ -170,7 +178,7 @@ const ProductDetail = () => {
                 </Link>
                 <div className="flex gap-3">
                   <a
-                    href="https://wa.me/995500057527"
+                    href="https://wa.me/995579909808"
                     target="_blank"
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-border text-foreground font-medium hover:bg-muted transition-colors"
@@ -178,7 +186,7 @@ const ProductDetail = () => {
                     <MessageCircle size={18} /> WhatsApp
                   </a>
                   <a
-                    href="https://t.me/+995500057527"
+                    href="https://t.me/+995579909808"
                     target="_blank"
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-border text-foreground font-medium hover:bg-muted transition-colors"
@@ -215,6 +223,12 @@ const ProductDetail = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[70] bg-black/90 flex items-center justify-center"
             onClick={() => setLightboxOpen(false)}
+            onPanEnd={(_e, info) => {
+              if (Math.abs(info.offset.x) > 50) {
+                if (info.offset.x > 0) setActiveImage(prev => (prev - 1 + images.length) % images.length);
+                else setActiveImage(prev => (prev + 1) % images.length);
+              }
+            }}
           >
             {/* Close */}
             <button className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-10">
@@ -256,9 +270,8 @@ const ProductDetail = () => {
                 <button
                   key={i}
                   onClick={e => { e.stopPropagation(); setActiveImage(i); }}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    activeImage === i ? 'bg-gold' : 'bg-white/40'
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${activeImage === i ? 'bg-gold' : 'bg-white/40'
+                    }`}
                 />
               ))}
             </div>

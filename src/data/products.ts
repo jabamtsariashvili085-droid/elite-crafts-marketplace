@@ -1,6 +1,6 @@
 export interface Product {
   id: string;
-  category: 'granite' | 'furniture';
+  category: 'granite' | 'furniture' | 'cnc';
   subcategory: string;
   title_ka: string;
   title_ru: string;
@@ -12,6 +12,7 @@ export interface Product {
   dimensions: string;
   material: string;
   image: string;
+  images?: string[] | null;
   featured: boolean;
 }
 

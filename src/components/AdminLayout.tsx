@@ -1,10 +1,13 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Package, Image, MessageSquare, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, Image, MessageSquare, LogOut, Settings, Newspaper, Tag } from 'lucide-react';
 
 const sidebarLinks = [
   { to: '/admin/dashboard', icon: LayoutDashboard, label: 'დეშბორდი' },
   { to: '/admin/products', icon: Package, label: 'პროდუქტები' },
+  { to: '/admin/categories', icon: Tag, label: 'კატეგორიები' },
+  { to: '/admin/hero', icon: Image, label: 'სლაიდერი' },
+  { to: '/admin/articles', icon: Newspaper, label: 'სიახლეები' },
   { to: '/admin/messages', icon: MessageSquare, label: 'შეტყობინებები' },
 ];
 
@@ -27,11 +30,10 @@ const AdminLayout = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === link.to
-                  ? 'bg-gold/10 text-gold'
-                  : 'text-foreground/70 hover:text-foreground hover:bg-muted'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
+                ? 'bg-gold/10 text-gold'
+                : 'text-foreground/70 hover:text-foreground hover:bg-muted'
+                }`}
             >
               <link.icon size={18} />
               {link.label}
@@ -58,9 +60,8 @@ const AdminLayout = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`p-2 rounded-lg ${
-                location.pathname === link.to ? 'bg-gold/10 text-gold' : 'text-foreground/70'
-              }`}
+              className={`p-2 rounded-lg ${location.pathname === link.to ? 'bg-gold/10 text-gold' : 'text-foreground/70'
+                }`}
             >
               <link.icon size={18} />
             </Link>
