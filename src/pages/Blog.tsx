@@ -55,30 +55,23 @@ const Blog = () => {
                         ))}
                     </div>
                 ) : articles && articles.length > 0 ? (
-                    <div className="space-y-12">
-                        {/* Featured Latest Post */}
-                        <div className="max-w-5xl mx-auto">
-                            <GlowCard article={articles[0]} />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-8">
-                            {articles.slice(1).map((article) => (
-                                <Link
-                                    to={`/blog/${article.slug}`}
-                                    key={article.id}
-                                    className="flex justify-center"
-                                >
-                                    <FlipCard
-                                        title={article.title}
-                                        description={article.content.substring(0, 100) + "..."}
-                                        badge="სტატია"
-                                        image={article.image || 'https://placehold.co/600x400/e2e8f0/64748b?text=Article'}
-                                        footer={`${new Date(article.created_at).toLocaleDateString('ka-GE')} | ${article.author || 'Admin'}`}
-                                        className="w-full"
-                                    />
-                                </Link>
-                            ))}
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {articles.map((article) => (
+                            <Link
+                                to={`/blog/${article.slug}`}
+                                key={article.id}
+                                className="flex justify-center"
+                            >
+                                <FlipCard
+                                    title={article.title}
+                                    description={article.content.substring(0, 100) + "..."}
+                                    badge="სტატია"
+                                    image={article.image || 'https://placehold.co/600x400/e2e8f0/64748b?text=Article'}
+                                    footer={`${new Date(article.created_at).toLocaleDateString('ka-GE')} | ${article.author || 'Admin'}`}
+                                    className="w-full"
+                                />
+                            </Link>
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-20">
