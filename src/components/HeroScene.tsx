@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Image, Float, Sparkles, Environment, PerspectiveCamera, ContactShadows } from '@react-three/drei';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Image, Float, Sparkles, Environment, PerspectiveCamera, ContactShadows, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -54,9 +54,158 @@ const GoldMaterial = new THREE.MeshStandardMaterial({
   emissiveIntensity: 0.2
 });
 
+const SilverMaterial = new THREE.MeshStandardMaterial({
+  color: "#C0C0C0",
+  metalness: 0.95,
+  roughness: 0.15,
+});
+
+const CeramicMaterial = new THREE.MeshStandardMaterial({
+  color: "#F5F0E8",
+  metalness: 0.05,
+  roughness: 0.4,
+});
+
+/* ─── Coffee Cup ─── */
+const CoffeeCup = ({ position }: { position: [number, number, number] }) => (
+  <Float speed={1.8} rotationIntensity={0.6} floatIntensity={0.8}>
+    <group position={position} rotation={[0.1, 0.4, 0]}>
+      {/* Cup body */}
+      <mesh>
+        <cylinderGeometry args={[0.18, 0.14, 0.28, 32]} />
+        <primitive object={CeramicMaterial.clone()} />
+      </mesh>
+      {/* Handle */}
+      <mesh position={[0.22, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <torusGeometry args={[0.08, 0.02, 12, 24, Math.PI]} />
+        <primitive object={CeramicMaterial.clone()} />
+      </mesh>
+      {/* Coffee surface */}
+      <mesh position={[0, 0.12, 0]}>
+        <circleGeometry args={[0.16, 32]} />
+        <meshStandardMaterial color="#3E2723" roughness={0.8} rotation-x={-Math.PI / 2} />
+      </mesh>
+    </group>
+  </Float>
+);
+
+/* ─── Plate with gold rim ─── */
+const Plate = ({ position }: { position: [number, number, number] }) => (
+  <Float speed={1.2} rotationIntensity={0.3} floatIntensity={0.6}>
+    <group position={position} rotation={[0.15, 0.8, 0.05]}>
+      <mesh>
+        <cylinderGeometry args={[0.4, 0.38, 0.04, 48]} />
+        <primitive object={CeramicMaterial.clone()} />
+      </mesh>
+      {/* Gold rim */}
+      <mesh position={[0, 0.021, 0]}>
+        <torusGeometry args={[0.39, 0.008, 8, 48]} />
+        <primitive object={GoldMaterial.clone()} />
+      </mesh>
+    </group>
+  </Float>
+);
+
+/* ─── Kitchen Knife ─── */
+const Knife = ({ position }: { position: [number, number, number] }) => (
+  <Float speed={2} rotationIntensity={1} floatIntensity={0.5}>
+    <group position={position} rotation={[0, 0, 0.6]}>
+      {/* Blade */}
+      <mesh position={[0, 0.3, 0]}>
+        <boxGeometry args={[0.02, 0.5, 0.12]} />
+        <primitive object={SilverMaterial.clone()} />
+      </mesh>
+      {/* Handle */}
+      <mesh position={[0, -0.05, 0]}>
+        <boxGeometry args={[0.04, 0.2, 0.06]} />
+        <meshStandardMaterial color="#4A3728" roughness={0.7} metalness={0.1} />
+      </mesh>
+    </group>
+  </Float>
+);
+
+/* ─── Faucet ─── */
+const Faucet = ({ position }: { position: [number, number, number] }) => (
+  <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.4}>
+    <group position={position}>
+      {/* Base */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.06, 0.08, 0.15, 24]} />
+        <primitive object={GoldMaterial.clone()} />
+      </mesh>
+      {/* Neck */}
+      <mesh position={[0, 0.25, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 0.4, 16]} />
+        <primitive object={GoldMaterial.clone()} />
+      </mesh>
+      {/* Spout curve */}
+      <mesh position={[0.12, 0.4, 0]} rotation={[0, 0, -Math.PI / 3]}>
+        <torusGeometry args={[0.12, 0.025, 12, 24, Math.PI / 2]} />
+        <primitive object={GoldMaterial.clone()} />
+      </mesh>
+    </group>
+  </Float>
+);
+
+/* ─── Rotating Wine Glass ─── */
+const WineGlass = ({ position }: { position: [number, number, number] }) => {
+  const ref = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.y = state.clock.elapsedTime * 0.5;
+    }
+  });
+  return (
+    <Float speed={1.5} rotationIntensity={0.4} floatIntensity={0.7}>
+      <group ref={ref} position={position}>
+        {/* Bowl */}
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.12, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <meshPhysicalMaterial color="#ffffff" transmission={0.9} thickness={0.5} roughness={0} metalness={0} transparent opacity={0.3} />
+        </mesh>
+        {/* Stem */}
+        <mesh position={[0, 0.05, 0]}>
+          <cylinderGeometry args={[0.012, 0.012, 0.2, 12]} />
+          <meshPhysicalMaterial color="#ffffff" transmission={0.85} roughness={0} transparent opacity={0.4} />
+        </mesh>
+        {/* Base */}
+        <mesh position={[0, -0.05, 0]}>
+          <cylinderGeometry args={[0.08, 0.08, 0.02, 24]} />
+          <meshPhysicalMaterial color="#ffffff" transmission={0.85} roughness={0} transparent opacity={0.4} />
+        </mesh>
+      </group>
+    </Float>
+  );
+};
+
+/* ─── Pulsing Light Orb ─── */
+const LightOrb = ({ position, color }: { position: [number, number, number]; color: string }) => {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((state) => {
+    if (ref.current) {
+      const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.15;
+      ref.current.scale.setScalar(scale);
+    }
+  });
+  return (
+    <mesh ref={ref} position={position}>
+      <sphereGeometry args={[0.08, 16, 16]} />
+      <MeshDistortMaterial color={color} emissive={color} emissiveIntensity={2} distort={0.3} speed={3} transparent opacity={0.6} />
+    </mesh>
+  );
+};
+
 const FloatingShapes = () => {
   return (
     <group>
+      {/* Kitchen items */}
+      <CoffeeCup position={[-4.5, 2.2, -1]} />
+      <Plate position={[4, 2, -2]} />
+      <Knife position={[-3, -1.8, -1.5]} />
+      <Faucet position={[5, -0.5, -2]} />
+      <WineGlass position={[-5, -0.5, -1]} />
+
+      {/* Original floating geometric shapes */}
       <Float speed={1.5} rotationIntensity={1} floatIntensity={1}>
         <mesh position={[-5, 2, -2]} rotation={[0.5, 0.5, 0]}>
           <torusGeometry args={[0.3, 0.08, 16, 32]} />
@@ -75,15 +224,18 @@ const FloatingShapes = () => {
           <primitive object={GoldMaterial} />
         </mesh>
       </Float>
-      <Float speed={2.5} rotationIntensity={1.5} floatIntensity={0.8}>
-        <mesh position={[-3, -2.5, -1]}>
-          <octahedronGeometry args={[0.25]} />
-          <primitive object={GoldMaterial} />
-        </mesh>
-      </Float>
+
+      {/* Light orbs for volumetric feel */}
+      <LightOrb position={[-2, 1, 0]} color="#FFD700" />
+      <LightOrb position={[3, -1.5, -1]} color="#B8860B" />
+      <LightOrb position={[0, 2.5, -2]} color="#DAA520" />
+
+      {/* Extra point lights for drama */}
+      <pointLight position={[-4, 2, 1]} intensity={0.4} color="#FFD700" distance={5} />
+      <pointLight position={[4, -1, 1]} intensity={0.3} color="#FFA500" distance={5} />
     </group>
-  )
-}
+  );
+};
 
 const HeroScene = () => {
   const { t, i18n } = useTranslation();
